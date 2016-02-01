@@ -127,7 +127,7 @@
 {
     self.borderColor = [UIColor colorWithRed:203/255.0 green:32/255.0 blue:39/255.0 alpha:1];
     self.borderWidth = 2.0f;
-    self.threshold = 60.0f;
+    self.threshold = 120.0f;
     self.isUserAction = NO;
     self.contentMode = UIViewContentModeRedraw;
     self.state = AAPullToRefreshStateNormal;
@@ -197,17 +197,19 @@
     UIEdgeInsets currentInsets = self.scrollView.contentInset;
     switch (self.position){
         case AAPullToRefreshPositionTop: {
-            CGFloat offset = MAX(self.scrollView.contentOffset.y * -1, 0);
-            currentInsets.top = MIN(offset, self.originalInsetTop + self.bounds.size.height + 20.0f);
+            CGFloat offsetY = MAX(self.scrollView.contentOffset.y * -1, 0);
+            currentInsets.top = MIN(offsetY, self.originalInsetTop + self.bounds.size.height + 20.0f);
         }
         case AAPullToRefreshPositionBottom:{
             currentInsets.bottom = MIN(self.threshold, self.originalInsetBottom + self.bounds.size.height + 40.0f);
         }
         case AAPullToRefreshPositionLeft:{
-            currentInsets.left = MIN(self.threshold, self.originalInsetleft + self.bounds.size.width + 20.0f);
+            CGFloat offsetX = MAX(self.scrollView.contentOffset.x * -1, 0);
+            currentInsets.left = MIN(self.threshold, offsetX);
         }
         case AAPullToRefreshPositionRight:{
-            currentInsets.right = MIN(self.threshold, self.originalInsetRight + self.bounds.size.width + 40.0f);
+            CGFloat offsetX = MAX(self.scrollView.contentOffset.x, 0);
+            currentInsets.right = MIN(self.threshold, offsetX);
         }
         default: break;
     }
