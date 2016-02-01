@@ -36,6 +36,8 @@
     view.scrollView = self;
     view.originalInsetTop = self.contentInset.top;
     view.originalInsetBottom = self.contentInset.bottom;
+    view.originalInsetleft = self.contentInset.left;
+    view.originalInsetRight = self.contentInset.right;
     view.showPullToRefresh = YES;
     view.alpha = 0.0;
     [self addSubview:view];
@@ -193,27 +195,49 @@
 - (void)setupScrollViewContentInsetForLoadingIndicator:(actionHandler)handler
 {
     UIEdgeInsets currentInsets = self.scrollView.contentInset;
-    if (self.position == AAPullToRefreshPositionTop) {
-        CGFloat offset = MAX(self.scrollView.contentOffset.y * -1, 0);
-        currentInsets.top = MIN(offset, self.originalInsetTop + self.bounds.size.height + 20.0f);
-    } else {
-        //CGFloat overBottomOffsetY = self.scrollView.contentOffset.y - self.scrollView.contentSize.height + self.scrollView.frame.size.height;
-        //currentInsets.bottom = MIN(overBottomOffsetY, self.originalInsetBottom + self.bounds.size.height + 40.0);
-        currentInsets.bottom = MIN(self.threshold, self.originalInsetBottom + self.bounds.size.height + 40.0f);
+    switch (self.position){
+        case AAPullToRefreshPositionTop: {
+            CGFloat offset = MAX(self.scrollView.contentOffset.y * -1, 0);
+            currentInsets.top = MIN(offset, self.originalInsetTop + self.bounds.size.height + 20.0f);
+        }
+        case AAPullToRefreshPositionBottom:{
+            currentInsets.bottom = MIN(self.threshold, self.originalInsetBottom + self.bounds.size.height + 40.0f);
+        }
+        case AAPullToRefreshPositionLeft:{
+            currentInsets.left = MIN(self.threshold, self.originalInsetleft + self.bounds.size.width + 20.0f);
+        }
+        case AAPullToRefreshPositionRight:{
+            currentInsets.right = MIN(self.threshold, self.originalInsetRight + self.bounds.size.width + 40.0f);
+        }
+        default: break;
     }
+    
     [self setScrollViewContentInset:currentInsets handler:handler];
 }
 
 - (void)resetScrollViewContentInset:(actionHandler)handler
 {
     UIEdgeInsets currentInsets = self.scrollView.contentInset;
-    if (self.position == AAPullToRefreshPositionTop) {
-        currentInsets.top = self.originalInsetTop;
-    } else {
-        currentInsets.bottom = self.originalInsetBottom;
+    
+    switch (self.position){
+        case AAPullToRefreshPositionTop: {
+            currentInsets.top = self.originalInsetTop;
+        }
+        case AAPullToRefreshPositionBottom:{
+            currentInsets.bottom = self.originalInsetBottom;
+        }
+        case AAPullToRefreshPositionLeft:{
+            currentInsets.left = self.originalInsetleft;
+        }
+        case AAPullToRefreshPositionRight:{
+            currentInsets.right = self.originalInsetRight;
+        }
+        default: break;
     }
+    
     [self setScrollViewContentInset:currentInsets handler:handler];
 }
+
 
 - (void)setScrollViewContentInset:(UIEdgeInsets)contentInset handler:(actionHandler)handler
 {
