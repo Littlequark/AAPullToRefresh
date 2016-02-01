@@ -77,7 +77,8 @@
     CGContextFillEllipseInRect(ctx,CGRectInset(self.bounds, self.outlineWidth, self.outlineWidth));
     
     //Draw circle outline
-    CGContextSetStrokeColorWithColor(ctx, [UIColor colorWithWhite:0.4f alpha:0.9f].CGColor);
+//    CGContextSetStrokeColorWithColor(ctx, [UIColor colorWithWhite:0.4f alpha:0.9f].CGColor);
+    CGContextSetStrokeColorWithColor(ctx, [UIColor clearColor].CGColor);//[UIColor colorWithWhite:0.4f alpha:0.9f].CGColor);
     CGContextSetLineWidth(ctx, self.outlineWidth);
     CGContextStrokeEllipseInRect(ctx, CGRectInset(self.bounds, self.outlineWidth, self.outlineWidth));
 }
