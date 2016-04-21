@@ -13,14 +13,14 @@
             if (((AAPullToRefresh *)v).position == position)
                 return (AAPullToRefresh *)v;
     }
-
+    
     AAPullToRefresh *view = [[AAPullToRefresh alloc] initWithImage:[UIImage imageNamed:@"centerIcon"]
                                                           position:position];
     switch (view.position) {
         case AAPullToRefreshPositionTop:
         case AAPullToRefreshPositionBottom:
             view.frame = CGRectMake((self.bounds.size.width - view.bounds.size.width)/2,
-                    -view.bounds.size.height, view.bounds.size.width, view.bounds.size.height);
+                                    -view.bounds.size.height, view.bounds.size.width, view.bounds.size.height);
             break;
         case AAPullToRefreshPositionLeft:
             view.frame = CGRectMake(-view.bounds.size.width, self.bounds.size.height/2.0f, view.bounds.size.width, view.bounds.size.height);
@@ -77,7 +77,7 @@
     CGContextFillEllipseInRect(ctx,CGRectInset(self.bounds, self.outlineWidth, self.outlineWidth));
     
     //Draw circle outline
-//    CGContextSetStrokeColorWithColor(ctx, [UIColor colorWithWhite:0.4f alpha:0.9f].CGColor);
+    //    CGContextSetStrokeColorWithColor(ctx, [UIColor colorWithWhite:0.4f alpha:0.9f].CGColor);
     CGContextSetStrokeColorWithColor(ctx, [UIColor clearColor].CGColor);//[UIColor colorWithWhite:0.4f alpha:0.9f].CGColor);
     CGContextSetLineWidth(ctx, self.outlineWidth);
     CGContextStrokeEllipseInRect(ctx, CGRectInset(self.bounds, self.outlineWidth, self.outlineWidth));
@@ -429,8 +429,9 @@
     
     [self.activityIndicatorView startAnimating];
     [self setupScrollViewContentInsetForLoadingIndicator:nil];
-    if (self.pullToRefreshHandler)
-        self.pullToRefreshHandler(self);
+    if (_pullToRefreshHandler){
+        _pullToRefreshHandler(self);
+    }
 }
 
 - (void)actionStopState
@@ -444,7 +445,8 @@
                          [self.activityIndicatorView stopAnimating];
                          [self resetScrollViewContentInset:^{
                              self.activityIndicatorView.transform = CGAffineTransformIdentity;
-                             [self setLayerHidden:NO];
+                             [self checkInsets];
+                             
                              [self setLayerOpacity:1.0f];
                              self.state = AAPullToRefreshStateNormal;
                          }];
@@ -519,6 +521,33 @@
     _activityIndicatorView.frame = self.bounds;
     [self addSubview:_activityIndicatorView];
     
+}
+
+#pragma mark - checkInsets
+
+-(void)checkInsets{
+    
+    switch (self.position) {
+        case AAPullToRefreshPositionLeft:
+            [self setLayerHidden:(_scrollView.contentOffset.x>=0.0)];
+            break;
+            
+        case AAPullToRefreshPositionTop:
+            [self setLayerHidden:(_scrollView.contentOffset.y>=0.0)];
+            break;
+            
+        case AAPullToRefreshPositionRight:
+            [self setLayerHidden:(_scrollView.contentOffset.x+_scrollView.contentSize.width <= _scrollView.bounds.size.width)];
+            break;
+            
+        case AAPullToRefreshPositionBottom:
+            [self setLayerHidden:(_scrollView.contentOffset.y+_scrollView.contentSize.height <= _scrollView.bounds.size.height)];
+            
+            break;
+            
+        default:
+            break;
+    }
 }
 
 @end
